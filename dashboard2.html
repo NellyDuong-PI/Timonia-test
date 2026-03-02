@@ -1,61 +1,41 @@
-<div class="project-grid">
-    <div class="card-project" onclick="window.location.href='projet.html?type=achat'">
-        <span class="status-pill" style="background: var(--accentL); color: var(--accent);">35%</span>
-        <div class="icon-box" style="background: var(--accentL);">🏠</div>
-        <h3 style="font-size: 16px; margin: 0;">Achat immobilier</h3>
-        <p style="font-size: 12px; color: var(--muted); margin: 5px 0;">Appartement T3 — Lyon 6e</p>
-        <div class="active-step">
-            <span>✍️</span> <span style="font-weight: 700; color: var(--accent);">Offre d'achat acceptée</span>
-        </div>
-        <div class="pb-bg"><div class="pb-fill" style="width: 35%; background: var(--accent);"></div></div>
-        <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700;">
-            <span style="color: var(--muted);">3/12 tâches</span>
-            <span style="color: var(--accent);">Détails →</span>
-        </div>
-    </div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Tableau de bord — Timonia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s;}
+.lora{font-family:'Lora',serif;}
+:root{
+  --bg:#f7f8fc;--surf:#fff;--surf2:#f0f3fb;--surf3:#e6eaf7;
+  --border:rgba(15,30,80,0.08);--text:#0d1829;--muted:#8494b8;
+  --accent:#1e63f0;--accentL:rgba(30,99,240,0.08);--accentM:rgba(30,99,240,0.16);
+  --teal:#0ba592;--tealL:rgba(11,165,146,0.09);
+  --gold:#d08600;--goldL:rgba(208,134,0,0.09);
+  --green:#16a34a;--greenL:rgba(22,163,74,0.09);
+  --red:#e02424;--redL:rgba(224,36,36,0.08);
+  --purple:#7c3aed;--purpleL:rgba(124,58,237,0.08);
+  --shadow:rgba(0,0,0,0.06);--nav-bg:rgba(247,248,252,0.93);
+}
+body.dark{
+  --bg:#08111e;--surf:#101826;--surf2:#19243a;--surf3:#212d45;
+  --border:rgba(255,255,255,0.07);--text:#dde4f8;--muted:#4e6080;
+  --accentL:rgba(30,99,240,0.16);--accentM:rgba(30,99,240,0.26);
+  --tealL:rgba(11,165,146,0.16);--goldL:rgba(208,134,0,0.16);
+  --greenL:rgba(22,163,74,0.14);--redL:rgba(224,36,36,0.14);
+  --purpleL:rgba(124,58,237,0.16);
+  --shadow:rgba(0,0,0,0.35);--nav-bg:rgba(8,17,30,0.93);
+}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:var(--surf3);border-radius:3px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fadeUp .32s cubic-bezier(.22,1,.36,1);}
 
-    <div class="card-project" onclick="window.location.href='projet.html?type=renov'">
-        <span class="status-pill" style="background: var(--goldL); color: var(--gold);">60%</span>
-        <div class="icon-box" style="background: var(--goldL);">🔧</div>
-        <h3 style="font-size: 16px; margin: 0;">Rénovation énergétique</h3>
-        <p style="font-size: 12px; color: var(--muted); margin: 5px 0;">Résidence principale — Toulouse</p>
-        <div class="active-step">
-            <span>♻️</span> <span style="font-weight: 700; color: var(--gold);">Installation PAC</span>
-        </div>
-        <div class="pb-bg"><div class="pb-fill" style="width: 60%; background: var(--gold);"></div></div>
-        <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700;">
-            <span style="color: var(--muted);">8/13 tâches</span>
-            <span style="color: var(--gold);">Détails →</span>
-        </div>
-    </div>
-
-    <div class="card-project" onclick="window.location.href='projet.html?type=location'">
-        <span class="status-pill" style="background: var(--tealL); color: var(--teal);">50%</span>
-        <div class="icon-box" style="background: var(--tealL);">🏘️</div>
-        <h3 style="font-size: 16px; margin: 0;">Mise en location</h3>
-        <p style="font-size: 12px; color: var(--muted); margin: 5px 0;">Appartement T2 — Paris 11e</p>
-        <div class="active-step">
-            <span>📢</span> <span style="font-weight: 700; color: var(--teal);">Sélection locataire</span>
-        </div>
-        <div class="pb-bg"><div class="pb-fill" style="width: 50%; background: var(--teal);"></div></div>
-        <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700;">
-            <span style="color: var(--muted);">7/14 tâches</span>
-            <span style="color: var(--teal);">Détails →</span>
-        </div>
-    </div>
-
-    <div class="card-project" onclick="window.location.href='projet.html?type=vente'">
-        <span class="status-pill" style="background: var(--purpleL); color: var(--purple);">45%</span>
-        <div class="icon-box" style="background: var(--purpleL);">💰</div>
-        <h3 style="font-size: 16px; margin: 0;">Mise en vente</h3>
-        <p style="font-size: 12px; color: var(--muted); margin: 5px 0;">T4 — Bordeaux Chartrons</p>
-        <div class="active-step">
-            <span>🔍</span> <span style="font-weight: 700; color: var(--purple);">Visites & offres</span>
-        </div>
-        <div class="pb-bg"><div class="pb-fill" style="width: 45%; background: var(--purple);"></div></div>
-        <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700;">
-            <span style="color: var(--muted);">6/13 tâches</span>
-            <span style="color: var(--purple);">Détails →</span>
-        </div>
-    </div>
-</div>
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(22px);border-bottom:1px solid var(--border);}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.lo
