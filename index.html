@@ -1,0 +1,792 @@
+// ─── PALETTE & THEME ─────────────────────────────────────────────────────────
+const LIGHT = {
+  bg:       "#fafafa",
+  surface:  "#ffffff",
+  surface2: "#f4f5f9",
+  surface3: "#eceef5",
+  border:   "rgba(15,23,80,0.07)",
+  text:     "#0f1729",
+  muted:    "#8892b0",
+  accent:   "#1a56db",
+  accentL:  "rgba(26,86,219,0.08)",
+  teal:     "#0e9f8e",
+  tealL:    "rgba(14,159,142,0.09)",
+  gold:     "#c4881a",
+  goldL:    "rgba(196,136,26,0.09)",
+  green:    "#15803d",
+  greenL:   "rgba(21,128,61,0.09)",
+  red:      "#dc2626",
+};
+const DARK = {
+  bg:       "#090d1a",
+  surface:  "#111827",
+  surface2: "#1a2035",
+  surface3: "#212840",
+  border:   "rgba(255,255,255,0.06)",
+  text:     "#e8edf8",
+  muted:    "#556080",
+  accent:   "#3b7dfc",
+  accentL:  "rgba(59,125,252,0.14)",
+  teal:     "#14b8a6",
+  tealL:    "rgba(20,184,166,0.14)",
+  gold:     "#f59e0b",
+  goldL:    "rgba(245,158,11,0.14)",
+  green:    "#22c55e",
+  greenL:   "rgba(34,197,94,0.12)",
+  red:      "#ef4444",
+};
+
+// ─── PRICING ─────────────────────────────────────────────────────────────────
+const PRIX_RDV = 49;
+
+const OFFRES_SALARIE = [
+  {
+    id: "solo",
+    label: "À la carte",
+    sublabel: "Sans entreprise adhérente",
+    prix: `${PRIX_RDV} €`,
+    period: "premier appel",
+    color: "accent",
+    features: [
+      "1 appel expert 45 min",
+      "Diagnostic de votre situation",
+      "Orientation financements",
+      "Récapitulatif écrit post-RDV",
+      "Délégation de tâches en option",
+    ],
+    cta: "Réserver mon appel",
+    highlight: false,
+  },
+  {
+    id: "pack",
+    label: "Pack Accompagnement",
+    sublabel: "Suivi complet de votre projet",
+    prix: "190 €",
+    period: "par projet",
+    color: "teal",
+    features: [
+      "Appels illimités pendant 3 mois",
+      "Checklist personnalisée & suivi",
+      "Montage dossier Action Logement",
+      "Délégation à la carte incluse",
+      "Accès plateforme & documents",
+    ],
+    cta: "Démarrer mon projet",
+    highlight: true,
+  },
+];
+
+const OFFRES_ENTREPRISE = [
+  {
+    id: "essentiel",
+    label: "Essentiel",
+    prix: "69 €",
+    period: "/salarié/an",
+    features: [
+      "Accès plateforme pour tous",
+      "1er appel expert offert/salarié",
+      "Tableau de bord RH",
+      "Support email dédié",
+    ],
+    cta: "Demander une démo",
+    highlight: false,
+  },
+  {
+    id: "mobilite",
+    label: "Mobilité Pro",
+    badge: "Recommandé Veolia",
+    prix: "89 €",
+    period: "/salarié/an",
+    features: [
+      "Tout Essentiel +",
+      "Accompagnement mobilité inclus",
+      "Recherche logement prise en charge",
+      "Aide MOBILI-PASS Action Logement",
+      "Reporting mutations en temps réel",
+    ],
+    cta: "Demander une démo",
+    highlight: true,
+  },
+  {
+    id: "premium",
+    label: "Premium",
+    prix: "Sur devis",
+    period: "",
+    features: [
+      "Tout Mobilité Pro +",
+      "Gestion parc immobilier entreprise",
+      "Conformité DPE flotte logements",
+      "Account manager dédié",
+      "Intégration SIRH",
+    ],
+    cta: "Nous contacter",
+    highlight: false,
+  },
+];
+
+const TEMOIGNAGES = [
+  { nom: "Sophie M.", poste: "Ingénieure, mutée Lyon", txt: "En 3 semaines j'avais mon appartement, le MOBILI-PASS déposé et le notaire coordiné. Seule j'aurais mis 3 mois.", note: 5 },
+  { nom: "David R.", poste: "Cadre, rénovation Bordeaux", txt: "J'ai délégué les devis et le dossier MaPrimeRénov'. 8 200 € d'aides récupérés que j'aurais ratés.", note: 5 },
+  { nom: "Marie L.", poste: "Directrice, vente Paris", txt: "La checklist avec les prix avant de déléguer, c'est ce qui m'a convaincu. Zéro surprise.", note: 5 },
+];
+
+const ROI_STATS = [
+  { val: "−34 jours", label: "Délai installation collaborateur", icon: "⚡" },
+  { val: "96%", label: "Satisfaction salariés", icon: "⭐" },
+  { val: "12h → 45 min", label: "Temps RH par dossier mutation", icon: "⏱" },
+  { val: "−18%", label: "Turnover lié au logement", icon: "📉" },
+  { val: "142 k€", label: "Économies RH estimées / an", icon: "💰" },
+  { val: "3 200+", label: "Projets accompagnés", icon: "🏠" },
+];
+
+// ─── APP ──────────────────────────────────────────────────────────────────────
+export default function TimoniaV3() {
+  const [dark, setDark] = useState(false);
+  const [page, setPage] = useState("salarie"); // salarie | entreprise | dashboard
+  const [modal, setModal] = useState(null); // null | "rdv" | "demo" | "rdv-pack"
+  const [formStep, setFormStep] = useState(1);
+  const [formData, setFormData] = useState({ nom: "", email: "", tel: "", projet: "", entreprise: "", salaries: "", message: "" });
+  const [formSent, setFormSent] = useState(false);
+  const [coverageCheck, setCoverageCheck] = useState("");
+  const [coverageResult, setCoverageResult] = useState(null);
+
+  const c = dark ? DARK : LIGHT;
+
+  const checkCoverage = () => {
+    const entreprisesCouvertes = ["veolia", "edf", "sncf", "orange", "total", "engie", "bnp"];
+    const val = coverageCheck.toLowerCase().trim();
+    if (entreprisesCouvertes.some(e => val.includes(e))) {
+      setCoverageResult("covered");
+    } else if (val.length > 2) {
+      setCoverageResult("not-covered");
+    }
+  };
+
+  const submitForm = (e) => {
+    e.preventDefault();
+    setFormSent(true);
+    setTimeout(() => { setModal(null); setFormSent(false); setFormStep(1); }, 3000);
+  };
+
+  // ── CSS ───────────────────────────────────────────────────────────────────
+  const css = `
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body,button,input,textarea,select{font-family:'Manrope',sans-serif;}
+    .fraunces{font-family:'Fraunces',serif;}
+    ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:${dark?"#2a3050":"#d0d5ea"};border-radius:3px;}
+
+    /* transitions */
+    .page{animation:slideIn 0.3s cubic-bezier(.22,1,.36,1);}
+    @keyframes slideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 ${c.accent}40}50%{box-shadow:0 0 0 8px ${c.accent}00}}
+
+    /* cards */
+    .card{background:${c.surface};border:1px solid ${c.border};border-radius:20px;transition:all 0.22s;}
+    .card-lift:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,0,0,${dark?"0.35":"0.08"});}
+
+    /* buttons */
+    .btn-main{background:${c.accent};color:#fff;border:none;border-radius:13px;padding:13px 26px;font-weight:700;font-size:15px;cursor:pointer;transition:all 0.2s;letter-spacing:-0.01em;}
+    .btn-main:hover{filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 8px 28px ${c.accent}45;}
+    .btn-teal{background:${c.teal};color:#fff;border:none;border-radius:13px;padding:13px 26px;font-weight:700;font-size:15px;cursor:pointer;transition:all 0.2s;}
+    .btn-teal:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 8px 28px ${c.teal}45;}
+    .btn-outline{background:transparent;color:${c.text};border:1.5px solid ${c.border};border-radius:13px;padding:12px 24px;font-weight:600;font-size:14px;cursor:pointer;transition:all 0.2s;}
+    .btn-outline:hover{background:${c.surface2};border-color:${c.muted};}
+    .btn-ghost{background:transparent;border:none;color:${c.muted};font-size:13px;font-weight:600;cursor:pointer;padding:6px 10px;border-radius:8px;transition:all 0.15s;}
+    .btn-ghost:hover{color:${c.text};background:${c.surface2};}
+
+    /* nav */
+    .nav-item{background:transparent;border:none;padding:8px 15px;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;transition:all 0.18s;color:${c.muted};letter-spacing:-0.01em;}
+    .nav-item:hover{color:${c.text};background:${c.surface2};}
+    .nav-item.on{color:${c.accent};background:${c.accentL};}
+
+    /* forms */
+    input,textarea,select{background:${c.surface2};border:1.5px solid ${c.border};border-radius:12px;padding:11px 14px;font-size:14px;color:${c.text};width:100%;outline:none;transition:border 0.2s;font-family:'Manrope',sans-serif;}
+    input:focus,textarea:focus,select:focus{border-color:${c.accent};box-shadow:0 0 0 3px ${c.accent}18;}
+    label{display:block;font-size:11px;font-weight:800;color:${c.muted};margin-bottom:5px;text-transform:uppercase;letter-spacing:0.07em;}
+    select{appearance:none;cursor:pointer;}
+
+    /* modal */
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(12px);z-index:300;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.2s;}
+    .modal{background:${c.surface};border-radius:24px;padding:36px;width:94%;max-width:500px;border:1px solid ${c.border};animation:modalUp 0.3s cubic-bezier(.22,1,.36,1);max-height:90vh;overflow-y:auto;}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes modalUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+    /* pricing */
+    .plan{background:${c.surface};border:1.5px solid ${c.border};border-radius:22px;padding:28px;transition:all 0.22s;position:relative;overflow:hidden;}
+    .plan:hover{box-shadow:0 16px 48px rgba(0,0,0,${dark?"0.3":"0.07"});}
+    .plan.featured{border-color:${c.accent};background:${dark?"linear-gradient(160deg,#0d1a40,#111827)":"linear-gradient(160deg,#eef3ff,#ffffff)"};}
+
+    /* misc */
+    .divider{height:1px;background:${c.border};margin:0;}
+    .tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:0.02em;}
+    .pb{height:5px;background:${c.surface3};border-radius:100px;overflow:hidden;}
+    .pf{height:100%;background:linear-gradient(90deg,${c.accent},${c.teal});border-radius:100px;transition:width 0.6s cubic-bezier(.22,1,.36,1);}
+    .star{color:#f59e0b;font-size:13px;}
+    .coverage-input{background:${c.surface2};border:2px solid ${c.border};border-radius:14px;padding:13px 18px;font-size:15px;color:${c.text};outline:none;transition:all 0.2s;font-family:'Manrope',sans-serif;flex:1;}
+    .coverage-input:focus{border-color:${c.accent};box-shadow:0 0 0 4px ${c.accent}15;}
+    .gradient-text{background:linear-gradient(135deg,${c.accent} 0%,${c.teal} 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  `;
+
+  // ── SHARED NAV ────────────────────────────────────────────────────────────
+  const Nav = () => (
+    <nav style={{ position: "sticky", top: 0, zIndex: 100, background: dark ? "rgba(9,13,26,0.9)" : "rgba(250,250,250,0.9)", backdropFilter: "blur(24px)", borderBottom: `1px solid ${c.border}` }}>
+      <div style={{ maxWidth: 1160, margin: "0 auto", padding: "0 24px", height: 58, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        {/* Logo */}
+        <div style={{ display: "flex", alignItems: "center", gap: 9, cursor: "pointer" }} onClick={() => setPage("salarie")}>
+          <div style={{ width: 32, height: 32, borderRadius: 9, background: `linear-gradient(135deg,${c.accent},${c.teal})`, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", flexShrink: 0 }}>
+            <img src="/logo-timonia.png" alt="" style={{ width: "100%", objectFit: "cover" }} onError={e => { e.target.style.display = "none"; e.target.nextSibling.style.display = "block"; }} />
+            <span style={{ display: "none", color: "#fff", fontSize: 15, fontWeight: 800 }}>T</span>
+          </div>
+          <span className="fraunces" style={{ fontSize: 19, fontWeight: 600, color: c.text, letterSpacing: "-0.02em" }}>Timonia</span>
+        </div>
+
+        {/* Links */}
+        <div style={{ display: "flex", gap: 2, alignItems: "center" }}>
+          <button className={`nav-item ${page === "salarie" ? "on" : ""}`} onClick={() => setPage("salarie")}>Pour les salariés</button>
+          <button className={`nav-item ${page === "entreprise" ? "on" : ""}`} onClick={() => setPage("entreprise")}>Pour les entreprises</button>
+          {page !== "salarie" && page !== "entreprise" && (
+            <button className={`nav-item ${page === "dashboard" ? "on" : ""}`} onClick={() => setPage("dashboard")}>Mon espace</button>
+          )}
+        </div>
+
+        {/* Right */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button onClick={() => setDark(!dark)} style={{ background: c.surface2, border: `1px solid ${c.border}`, borderRadius: 9, padding: "6px 10px", cursor: "pointer", fontSize: 15 }}>
+            {dark ? "☀️" : "🌙"}
+          </button>
+          <button className="btn-outline" style={{ fontSize: 13, padding: "8px 16px" }} onClick={() => setPage("dashboard")}>Se connecter</button>
+          <button className="btn-main" style={{ fontSize: 13, padding: "9px 18px" }} onClick={() => setModal("rdv")}>Prendre RDV</button>
+        </div>
+      </div>
+    </nav>
+  );
+
+  // ════════════════════════════════════════════════ PAGE SALARIÉ
+  const PageSalarie = () => (
+    <div className="page">
+      {/* ── HERO ── */}
+      <div style={{ position: "relative", overflow: "hidden", background: dark ? c.bg : "#fafbff" }}>
+        {/* Background glow */}
+        <div style={{ position: "absolute", top: "-20%", left: "50%", transform: "translateX(-50%)", width: 800, height: 600, background: `radial-gradient(ellipse, ${c.accent}12 0%, transparent 65%)`, pointerEvents: "none" }} />
+
+        <div style={{ maxWidth: 1160, margin: "0 auto", padding: "88px 24px 72px", textAlign: "center", position: "relative" }}>
+          {/* Coverage checker — placé en premier, c'est l'accroche principale */}
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 7, background: dark ? `${c.accent}18` : "#eef2ff", border: `1px solid ${c.accent}30`, borderRadius: 100, padding: "5px 14px", marginBottom: 24 }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: c.accent, animation: "pulse 2s infinite" }} />
+            <span style={{ color: c.accent, fontSize: 12, fontWeight: 800, letterSpacing: "0.04em" }}>VOTRE PROJET IMMOBILIER SIMPLIFIÉ</span>
+          </div>
+
+          <h1 className="fraunces" style={{ fontSize: "clamp(38px,5.5vw,66px)", lineHeight: 1.1, color: c.text, marginBottom: 20, letterSpacing: "-0.02em" }}>
+            Achetez, rénovez, louez —<br />
+            <em style={{ color: c.accent }}>sans vous noyer</em> dans les démarches.
+          </h1>
+
+          <p style={{ fontSize: 17, color: c.muted, maxWidth: 500, margin: "0 auto 44px", lineHeight: 1.75, fontWeight: 400 }}>
+            Un expert vous accompagne à chaque étape. Vous choisissez ce que vous faites seul, et ce que vous lui déléguez — avec le coût affiché avant.
+          </p>
+
+          {/* Coverage checker */}
+          <div style={{ background: c.surface, border: `1.5px solid ${c.border}`, borderRadius: 20, padding: 24, maxWidth: 520, margin: "0 auto 20px", textAlign: "left" }}>
+            <p style={{ fontSize: 13, fontWeight: 800, color: c.muted, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 12 }}>
+              🔍 Mon entreprise est-elle adhérente ?
+            </p>
+            <div style={{ display: "flex", gap: 10 }}>
+              <input
+                className="coverage-input"
+                placeholder="Nom de votre employeur (ex: Veolia, EDF…)"
+                value={coverageCheck}
+                onChange={e => { setCoverageCheck(e.target.value); setCoverageResult(null); }}
+                onKeyDown={e => e.key === "Enter" && checkCoverage()}
+              />
+              <button className="btn-main" style={{ whiteSpace: "nowrap", padding: "11px 20px", fontSize: 14 }} onClick={checkCoverage}>Vérifier</button>
+            </div>
+
+            {coverageResult === "covered" && (
+              <div style={{ marginTop: 14, background: c.greenL, border: `1px solid ${c.green}30`, borderRadius: 12, padding: "12px 16px", display: "flex", gap: 10, alignItems: "center", animation: "fadeUp 0.25s" }}>
+                <span style={{ fontSize: 20 }}>🎉</span>
+                <div>
+                  <p style={{ fontWeight: 800, color: c.green, fontSize: 14 }}>Votre entreprise est adhérente !</p>
+                  <p style={{ fontSize: 12, color: c.muted, marginTop: 2 }}>Premier appel expert offert + accompagnement mobilité pris en charge.</p>
+                </div>
+                <button className="btn-main" style={{ marginLeft: "auto", padding: "8px 14px", fontSize: 12, whiteSpace: "nowrap" }} onClick={() => setModal("rdv")}>Réserver →</button>
+              </div>
+            )}
+
+            {coverageResult === "not-covered" && (
+              <div style={{ marginTop: 14, background: c.accentL, border: `1px solid ${c.accent}25`, borderRadius: 12, padding: "12px 16px", display: "flex", gap: 10, alignItems: "flex-start", animation: "fadeUp 0.25s" }}>
+                <span style={{ fontSize: 20 }}>👋</span>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontWeight: 800, color: c.accent, fontSize: 14 }}>Votre entreprise n'est pas encore partenaire.</p>
+                  <p style={{ fontSize: 12, color: c.muted, marginTop: 2 }}>Premier appel expert à {PRIX_RDV} € — ou <span style={{ color: c.accent, fontWeight: 700, cursor: "pointer", textDecoration: "underline" }} onClick={() => setPage("entreprise")}>suggérez Timonia à votre DRH</span>.</p>
+                </div>
+                <button className="btn-main" style={{ padding: "8px 14px", fontSize: 12, whiteSpace: "nowrap" }} onClick={() => setModal("rdv")}>Réserver {PRIX_RDV} €</button>
+              </div>
+            )}
+          </div>
+
+          <p style={{ color: c.muted, fontSize: 12, marginBottom: 0 }}>
+            Entreprise adhérente ? Premier appel <strong style={{ color: c.green }}>offert</strong> ·
+            Sans abonnement : <strong style={{ color: c.text }}>{PRIX_RDV} €</strong> le premier appel · Aucun engagement
+          </p>
+        </div>
+      </div>
+
+      {/* ── COMMENT ÇA MARCHE ── */}
+      <div style={{ maxWidth: 1160, margin: "0 auto", padding: "72px 24px" }}>
+        <div style={{ textAlign: "center", marginBottom: 48 }}>
+          <p style={{ fontSize: 11, fontWeight: 800, color: c.accent, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>COMMENT ÇA MARCHE</p>
+          <h2 className="fraunces" style={{ fontSize: 36, color: c.text, letterSpacing: "-0.02em" }}>Vous décidez à chaque étape</h2>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
+          {[
+            { step: "01", icon: "📞", title: "Prenez rendez-vous", body: "Un expert analyse votre situation en 45 min. Diagnostic complet, objectifs clarifiés, plan d'action établi.", note: `${PRIX_RDV} € si entreprise non adhérente · Offert si couverte`, color: c.accent },
+            { step: "02", icon: "📋", title: "Votre checklist personnalisée", body: "Chaque tâche de votre projet apparaît. Pour chacune : faire seul, ou déléguer avec le prix affiché avant.", note: "Zéro surprise · Vous gardez le contrôle total", color: c.teal },
+            { step: "03", icon: "✅", title: "Avancez à votre rythme", body: "Faites vous-même ce que vous pouvez, déléguez ce qui vous dépasse. L'expert suit l'avancement en temps réel.", note: "Délégation à la carte · Pas d'abonnement caché", color: c.gold },
+          ].map((s, i) => (
+            <div key={i} className="card" style={{ padding: 28, position: "relative" }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: s.color, marginBottom: 14, letterSpacing: "0.06em" }}>ÉTAPE {s.step}</div>
+              <div style={{ fontSize: 32, marginBottom: 14 }}>{s.icon}</div>
+              <h3 style={{ fontSize: 17, fontWeight: 800, marginBottom: 8, color: c.text }}>{s.title}</h3>
+              <p style={{ color: c.muted, fontSize: 14, lineHeight: 1.65, marginBottom: 12 }}>{s.body}</p>
+              <p style={{ fontSize: 12, color: s.color, fontWeight: 700 }}>→ {s.note}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── OFFRES SALARIÉ ── */}
+      <div style={{ background: dark ? c.surface2 : "#f4f6ff", padding: "72px 0" }}>
+        <div style={{ maxWidth: 1160, margin: "0 auto", padding: "0 24px" }}>
+          <div style={{ textAlign: "center", marginBottom: 48 }}>
+            <p style={{ fontSize: 11, fontWeight: 800, color: c.accent, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>TARIFS TRANSPARENTS</p>
+            <h2 className="fraunces" style={{ fontSize: 36, color: c.text, letterSpacing: "-0.02em" }}>Choisissez votre niveau d'accompagnement</h2>
+            <p style={{ color: c.muted, fontSize: 15, marginTop: 10 }}>Si votre entreprise est adhérente, le premier appel est <strong style={{ color: c.green }}>offert</strong> dans les deux formules.</p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, maxWidth: 760, margin: "0 auto" }}>
+            {OFFRES_SALARIE.map(o => (
+              <div key={o.id} className={`plan ${o.highlight ? "featured" : ""}`}>
+                {o.highlight && (
+                  <div style={{ position: "absolute", top: 0, right: 0, background: `linear-gradient(135deg,${c.accent},${c.teal})`, color: "#fff", fontSize: 11, fontWeight: 800, padding: "6px 16px", borderRadius: "0 22px 0 12px", letterSpacing: "0.04em" }}>
+                    LE PLUS POPULAIRE
+                  </div>
+                )}
+                <p style={{ fontSize: 12, fontWeight: 700, color: c.muted, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 6 }}>{o.sublabel}</p>
+                <h3 className="fraunces" style={{ fontSize: 22, color: c.text, marginBottom: 16, letterSpacing: "-0.01em" }}>{o.label}</h3>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 20 }}>
+                  <span style={{ fontSize: 36, fontWeight: 800, color: o.highlight ? c.teal : c.accent }}>{o.prix}</span>
+                  <span style={{ fontSize: 13, color: c.muted }}>/ {o.period}</span>
+                </div>
+                <div style={{ borderTop: `1px solid ${c.border}`, paddingTop: 20, marginBottom: 24 }}>
+                  {o.features.map((f, i) => (
+                    <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 10 }}>
+                      <span style={{ color: o.highlight ? c.teal : c.accent, fontWeight: 800, fontSize: 13, flexShrink: 0, marginTop: 1 }}>✓</span>
+                      <span style={{ color: c.muted, fontSize: 13, lineHeight: 1.5 }}>{f}</span>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  className={o.highlight ? "btn-teal" : "btn-main"}
+                  style={{ width: "100%", fontSize: 14 }}
+                  onClick={() => setModal(o.highlight ? "rdv-pack" : "rdv")}
+                >
+                  {o.cta} →
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <p style={{ textAlign: "center", color: c.muted, fontSize: 13, marginTop: 20 }}>
+            💡 Votre entreprise n'est pas adhérente ? <span style={{ color: c.accent, fontWeight: 700, cursor: "pointer", textDecoration: "underline" }} onClick={() => setPage("entreprise")}>Suggérez-leur Timonia</span> — si elle souscrit, votre prochain appel devient gratuit.
+          </p>
+        </div>
+      </div>
+
+      {/* ── CAS D'USAGE ── */}
+      <div style={{ maxWidth: 1160, margin: "0 auto", padding: "72px 24px" }}>
+        <div style={{ textAlign: "center", marginBottom: 48 }}>
+          <p style={{ fontSize: 11, fontWeight: 800, color: c.accent, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>VOS PROJETS DE VIE</p>
+          <h2 className="fraunces" style={{ fontSize: 36, color: c.text, letterSpacing: "-0.02em" }}>On vous accompagne sur tout</h2>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 14 }}>
+          {[
+            { icon: "🚀", title: "Mobilité professionnelle", body: "Mutation imminente ? On cherche, on visite, on négocie. Vous arrivez avec les clés.", color: c.accent, tags: ["Recherche", "Visites", "MOBILI-PASS"] },
+            { icon: "🏠", title: "Acquisition", body: "Premier achat ou investissement : financement, diagnostics, notaire. Zéro case oubliée.", color: c.teal, tags: ["PTZ", "Courtage", "Compromis"] },
+            { icon: "🔧", title: "Rénovation énergétique", body: "DPE F ou G ? On monte les dossiers MaPrimeRénov', on coordonne les artisans.", color: c.gold, tags: ["MaPrimeRénov'", "CEE", "Passoire thermique"] },
+            { icon: "💰", title: "Vente & Location", body: "Checklist complète, délégation à la carte. La conformité sans le stress administratif.", color: "#8b5cf6", tags: ["Diagnostics", "Bail", "Mise en marché"] },
+          ].map((cas, i) => (
+            <div key={i} className="card card-lift" style={{ padding: 24 }}>
+              <div style={{ width: 46, height: 46, borderRadius: 14, background: `${cas.color}15`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, marginBottom: 16 }}>{cas.icon}</div>
+              <h3 style={{ fontWeight: 800, fontSize: 15, marginBottom: 8, color: c.text }}>{cas.title}</h3>
+              <p style={{ color: c.muted, fontSize: 13, lineHeight: 1.6, marginBottom: 14 }}>{cas.body}</p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                {cas.tags.map(t => <span key={t} style={{ background: `${cas.color}12`, color: cas.color, padding: "3px 9px", borderRadius: 100, fontSize: 11, fontWeight: 700 }}>{t}</span>)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── TÉMOIGNAGES ── */}
+      <div style={{ background: dark ? c.surface2 : "#f9faff", padding: "64px 0" }}>
+        <div style={{ maxWidth: 1160, margin: "0 auto", padding: "0 24px" }}>
+          <h2 className="fraunces" style={{ fontSize: 32, color: c.text, textAlign: "center", marginBottom: 40, letterSpacing: "-0.02em" }}>Ce qu'ils en disent</h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 18 }}>
+            {TEMOIGNAGES.map((t, i) => (
+              <div key={i} className="card" style={{ padding: 26 }}>
+                <div style={{ display: "flex", gap: 2, marginBottom: 14 }}>
+                  {[...Array(t.note)].map((_, j) => <span key={j} className="star">★</span>)}
+                </div>
+                <p style={{ color: c.text, fontSize: 14, lineHeight: 1.7, fontStyle: "italic", marginBottom: 16 }}>"{t.txt}"</p>
+                <div>
+                  <p style={{ fontWeight: 800, fontSize: 13, color: c.text }}>{t.nom}</p>
+                  <p style={{ color: c.muted, fontSize: 12 }}>{t.poste}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── CTA FINAL ── */}
+      <div style={{ maxWidth: 1160, margin: "0 auto", padding: "72px 24px", textAlign: "center" }}>
+        <h2 className="fraunces" style={{ fontSize: 42, color: c.text, marginBottom: 16, letterSpacing: "-0.02em" }}>
+          Votre projet commence<br /><span className="gradient-text">par un appel de 45 min.</span>
+        </h2>
+        <p style={{ color: c.muted, fontSize: 16, marginBottom: 32 }}>Vérifiez si votre entreprise est adhérente — sinon, {PRIX_RDV} € et aucun engagement.</p>
+        <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+          <button className="btn-main" style={{ fontSize: 16, padding: "15px 32px" }} onClick={() => setModal("rdv")}>Réserver mon appel →</button>
+          <button className="btn-outline" style={{ fontSize: 15 }} onClick={() => setPage("entreprise")}>Mon entreprise n'est pas adhérente</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ════════════════════════════════════════════════ PAGE ENTREPRISE
+  const PageEntreprise = () => (
+    <div className="page">
+      {/* ── HERO ENTREPRISE ── */}
+      <div style={{ position: "relative", overflow: "hidden", background: dark ? "#07101f" : "#f0f5ff" }}>
+        <div style={{ position: "absolute", top: "-30%", right: "-10%", width: 700, height: 700, background: `radial-gradient(ellipse,${c.teal}10 0%,transparent 65%)`, pointerEvents: "none" }} />
+        <div style={{ maxWidth: 1160, margin: "0 auto", padding: "88px 24px 72px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
+            <div>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 7, background: c.tealL, border: `1px solid ${c.teal}30`, borderRadius: 100, padding: "5px 14px", marginBottom: 24 }}>
+                <div style={{ width: 6, height: 6, borderRadius: "50%", background: c.teal }} />
+                <span style={{ color: c.teal, fontSize: 12, fontWeight: 800, letterSpacing: "0.04em" }}>POUR LES ENTREPRISES & DRH</span>
+              </div>
+              <h1 className="fraunces" style={{ fontSize: "clamp(32px,4vw,52px)", lineHeight: 1.1, color: c.text, marginBottom: 20, letterSpacing: "-0.02em" }}>
+                Transformez le logement en <em style={{ color: c.teal }}>avantage social</em> concret.
+              </h1>
+              <p style={{ fontSize: 16, color: c.muted, lineHeight: 1.75, marginBottom: 32 }}>
+                Vos salariés ont des projets immobiliers complexes. Chaque dossier non géré coûte du temps RH, génère du stress et fragilise les mobilités. Timonia règle ça.
+              </p>
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <button className="btn-teal" style={{ fontSize: 15, padding: "14px 28px" }} onClick={() => setModal("demo")}>Demander une démo Veolia →</button>
+                <button className="btn-outline" onClick={() => document.getElementById("offres-entreprise")?.scrollIntoView({ behavior: "smooth" })}>Voir les offres</button>
+              </div>
+            </div>
+
+            {/* Mini dashboard preview */}
+            <div className="card" style={{ padding: 24, background: dark ? c.surface2 : "#fff" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+                <div>
+                  <p style={{ fontSize: 11, fontWeight: 800, color: c.muted, textTransform: "uppercase", letterSpacing: "0.07em" }}>Tableau de bord DRH — Veolia Eau</p>
+                  <p style={{ fontSize: 13, color: c.muted, marginTop: 2 }}>847 salariés couverts · Contrat actif</p>
+                </div>
+                <span style={{ background: c.greenL, color: c.green, padding: "4px 10px", borderRadius: 100, fontSize: 11, fontWeight: 700 }}>● Live</span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+                {[["34", "Projets actifs", c.accent], ["12", "Mutations en cours", c.teal], ["96%", "Satisfaction", c.green], ["142 k€", "Économies RH", c.gold]].map(([v, l, col]) => (
+                  <div key={l} style={{ background: c.surface3, borderRadius: 12, padding: "14px 16px" }}>
+                    <p style={{ fontSize: 20, fontWeight: 800, color: col }}>{v}</p>
+                    <p style={{ fontSize: 11, color: c.muted, marginTop: 2 }}>{l}</p>
+                  </div>
+                ))}
+              </div>
+              {[{ n: "Thomas Mercier", t: "Mobilité Paris→Lyon", p: 40, c: c.teal },
+                { n: "Claire Fontaine", t: "Acquisition Nantes", p: 75, c: c.accent },
+                { n: "Marc Durand", t: "Rénovation Toulouse", p: 100, c: c.green }].map((row, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 0", borderTop: `1px solid ${c.border}` }}>
+                  <div style={{ width: 28, height: 28, borderRadius: "50%", background: `${row.c}20`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: row.c, flexShrink: 0 }}>{row.n.split(" ").map(x => x[0]).join("")}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 12, fontWeight: 700, color: c.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{row.n}</p>
+                    <p style={{ fontSize: 11, color: c.muted }}>{row.t}</p>
+                  </div>
+                  <div style={{ width: 80 }}>
+                    <div className="pb"><div className="pf" style={{ width: `${row.p}%`, background: row.c }}></div></div>
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 800, color: row.c, minWidth: 32, textAlign: "right" }}>{row.p}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── ROI STATS ── */}
+      <div style={{ maxWidth: 1160, margin: "0 auto", padding: "64px 24px" }}>
+        <div style={{ textAlign: "center", marginBottom: 40 }}>
+          <p style={{ fontSize: 11, fontWeight: 800, color: c.teal, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>L'IMPACT MESURÉ</p>
+          <h2 className="fraunces" style={{ fontSize: 34, color: c.text, letterSpacing: "-0.02em" }}>Ce que vos DRH constatent</h2>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+          {ROI_STATS.map((s, i) => (
+            <div key={i} className="card" style={{ padding: 24, textAlign: "center" }}>
+              <div style={{ fontSize: 28, marginBottom: 10 }}>{s.icon}</div>
+              <p className="fraunces gradient-text" style={{ fontSize: 30, fontWeight: 500, marginBottom: 6 }}>{s.val}</p>
+              <p style={{ color: c.muted, fontSize: 13 }}>{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── CE QUE VOUS COUVREZ ── */}
+      <div style={{ background: dark ? c.surface2 : "#f0f7f5", padding: "64px 0" }}>
+        <div style={{ maxWidth: 1160, margin: "0 auto", padding: "0 24px" }}>
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <p style={{ fontSize: 11, fontWeight: 800, color: c.teal, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>CE QUE VOUS OFFREZ À VOS SALARIÉS</p>
+            <h2 className="fraunces" style={{ fontSize: 34, color: c.text, letterSpacing: "-0.02em" }}>Un vrai avantage social, pas une promesse</h2>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 16 }}>
+            {[
+              { icon: "📞", title: "Premier appel expert offert", detail: "Chaque salarié a accès à un expert immobilier sans rien payer. Valeur : 49 €. Financé par l'abonnement entreprise.", covered: true },
+              { icon: "🚀", title: "Accompagnement mobilité complet", detail: "Recherche, visites, MOBILI-PASS Action Logement — tout pris en charge pour vos mutations. Option Mobilité Pro.", covered: true },
+              { icon: "📊", title: "Tableau de bord RH en temps réel", detail: "Suivez tous les projets de vos collaborateurs, les étapes en cours, les dossiers à valider.", covered: true },
+              { icon: "✅", title: "Conformité du parc immobilier", detail: "Checklist DPE, diagnostics, obligations légales — délégation possible sur chaque tâche.", covered: true },
+              { icon: "💰", title: "Délégation à la carte", detail: "Le salarié choisit ce qu'il délègue, avec le coût affiché avant. Payé par le salarié — pas par l'entreprise.", covered: false },
+              { icon: "🔧", title: "Rénovation énergétique", detail: "Montage MaPrimeRénov', CEE, suivi chantier. Service à la carte, payé par le salarié.", covered: false },
+            ].map((item, i) => (
+              <div key={i} className="card" style={{ padding: 22, display: "flex", gap: 16, alignItems: "flex-start" }}>
+                <div style={{ width: 42, height: 42, borderRadius: 12, background: item.covered ? c.tealL : c.surface3, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{item.icon}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
+                    <h3 style={{ fontWeight: 800, fontSize: 14, color: c.text }}>{item.title}</h3>
+                    <span style={{ fontSize: 10, fontWeight: 800, padding: "2px 8px", borderRadius: 100,
+                      background: item.covered ? c.tealL : c.surface3,
+                      color: item.covered ? c.teal : c.muted
+                    }}>{item.covered ? "✓ Couvert entreprise" : "Salarié à la carte"}</span>
+                  </div>
+                  <p style={{ color: c.muted, fontSize: 13, lineHeight: 1.55 }}>{item.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── OFFRES ENTREPRISE ── */}
+      <div id="offres-entreprise" style={{ maxWidth: 1160, margin: "0 auto", padding: "72px 24px" }}>
+        <div style={{ textAlign: "center", marginBottom: 48 }}>
+          <p style={{ fontSize: 11, fontWeight: 800, color: c.accent, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>OFFRES ENTREPRISE</p>
+          <h2 className="fraunces" style={{ fontSize: 36, color: c.text, letterSpacing: "-0.02em" }}>Simple, transparent, sans surprise</h2>
+          <p style={{ color: c.muted, fontSize: 15, marginTop: 10 }}>Abonnement annuel par salarié. Pas de commission cachée.</p>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
+          {OFFRES_ENTREPRISE.map(o => (
+            <div key={o.id} className={`plan ${o.highlight ? "featured" : ""}`}>
+              {o.badge && (
+                <div style={{ background: `linear-gradient(135deg,${c.accent},${c.teal})`, color: "#fff", fontSize: 10, fontWeight: 800, padding: "5px 14px", borderRadius: "0 22px 0 10px", position: "absolute", top: 0, right: 0, letterSpacing: "0.04em" }}>{o.badge}</div>
+              )}
+              <h3 className="fraunces" style={{ fontSize: 22, color: c.text, marginBottom: 6, letterSpacing: "-0.01em" }}>{o.label}</h3>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 20 }}>
+                <span style={{ fontSize: 32, fontWeight: 800, color: o.highlight ? c.accent : c.text }}>{o.prix}</span>
+                {o.period && <span style={{ fontSize: 13, color: c.muted }}>{o.period}</span>}
+              </div>
+              <div style={{ borderTop: `1px solid ${c.border}`, paddingTop: 18, marginBottom: 22 }}>
+                {o.features.map((f, i) => (
+                  <div key={i} style={{ display: "flex", gap: 9, alignItems: "flex-start", marginBottom: 9 }}>
+                    <span style={{ color: o.highlight ? c.accent : c.teal, fontWeight: 800, fontSize: 12, flexShrink: 0, marginTop: 2 }}>✓</span>
+                    <span style={{ color: c.muted, fontSize: 13 }}>{f}</span>
+                  </div>
+                ))}
+              </div>
+              <button className={o.highlight ? "btn-main" : "btn-outline"} style={{ width: "100%", fontSize: 14 }} onClick={() => setModal("demo")}>
+                {o.cta} →
+              </button>
+            </div>
+          ))}
+        </div>
+        <p style={{ textAlign: "center", color: c.muted, fontSize: 13, marginTop: 24 }}>
+          Tarifs dégressifs à partir de 500 salariés · Facturation annuelle · Intégration SIRH disponible en Premium
+        </p>
+      </div>
+
+      {/* ── PARTENAIRES ── */}
+      <div style={{ borderTop: `1px solid ${c.border}`, padding: "32px 0" }}>
+        <div style={{ maxWidth: 1160, margin: "0 auto", padding: "0 24px", textAlign: "center" }}>
+          <p style={{ color: c.muted, fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 20 }}>Entreprises partenaires</p>
+          <div style={{ display: "flex", justifyContent: "center", gap: 40, flexWrap: "wrap" }}>
+            {["Veolia", "EDF", "SNCF", "Orange", "Total Energies", "Engie"].map(p => (
+              <span key={p} style={{ fontSize: 15, fontWeight: 800, color: c.muted, opacity: 0.45 }}>{p}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── CTA FINAL ── */}
+      <div style={{ background: dark ? "linear-gradient(135deg,#07101f,#0a1628)" : "linear-gradient(135deg,#eef3ff,#f0f9f7)", padding: "72px 0" }}>
+        <div style={{ maxWidth: 680, margin: "0 auto", padding: "0 24px", textAlign: "center" }}>
+          <h2 className="fraunces" style={{ fontSize: 38, color: c.text, marginBottom: 16, letterSpacing: "-0.02em" }}>
+            Prêt à en parler ?
+          </h2>
+          <p style={{ color: c.muted, fontSize: 15, marginBottom: 32, lineHeight: 1.7 }}>
+            Démo personnalisée en 30 min. On vous montre exactement ce que vos collaborateurs verraient — avec vos cas de mobilité réels.
+          </p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <button className="btn-teal" style={{ fontSize: 16, padding: "15px 32px" }} onClick={() => setModal("demo")}>Demander une démo →</button>
+            <button className="btn-outline" onClick={() => setPage("salarie")}>Voir la vue salarié</button>
+          </div>
+          <p style={{ color: c.muted, fontSize: 12, marginTop: 16 }}>Réponse sous 24h · Sans engagement · Démo sur vos propres cas</p>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ════════════════════════════════════════════════ MODALS
+  const ModalRdv = ({ pack = false }) => (
+    <div className="modal-bg" onClick={e => e.target === e.currentTarget && setModal(null)}>
+      <div className="modal">
+        {formSent ? (
+          <div style={{ textAlign: "center", padding: "24px 0" }}>
+            <div style={{ fontSize: 52, marginBottom: 14 }}>✅</div>
+            <h2 className="fraunces" style={{ fontSize: 24, color: c.text, marginBottom: 8 }}>C'est confirmé !</h2>
+            <p style={{ color: c.muted, fontSize: 14 }}>Un expert Timonia vous rappelle sous 24h pour fixer le créneau.</p>
+          </div>
+        ) : (
+          <>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
+              <div>
+                <h2 className="fraunces" style={{ fontSize: 22, color: c.text, marginBottom: 4 }}>{pack ? "Pack Accompagnement" : "Réserver mon appel expert"}</h2>
+                <p style={{ color: c.muted, fontSize: 13 }}>{pack ? "190 € · Suivi complet 3 mois" : `${PRIX_RDV} € si votre entreprise n'est pas adhérente`}</p>
+              </div>
+              <button className="btn-ghost" onClick={() => setModal(null)} style={{ fontSize: 18, padding: "4px 8px" }}>✕</button>
+            </div>
+
+            {/* Coverage banner */}
+            <div style={{ background: c.accentL, border: `1px solid ${c.accent}25`, borderRadius: 12, padding: "10px 14px", marginBottom: 22, display: "flex", gap: 9, alignItems: "center" }}>
+              <span>💡</span>
+              <p style={{ fontSize: 12, color: c.accent, fontWeight: 600 }}>Entreprise adhérente ? Cet appel est <strong>offert</strong>. On vérifiera avec vous en 2 secondes.</p>
+            </div>
+
+            <form onSubmit={submitForm} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div><label>Prénom & Nom</label><input required placeholder="Thomas Mercier" value={formData.nom} onChange={e => setFormData({ ...formData, nom: e.target.value })} /></div>
+                <div><label>Email</label><input type="email" required placeholder="t.mercier@email.com" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} /></div>
+              </div>
+              <div><label>Votre employeur (optionnel)</label><input placeholder="Veolia, EDF, SNCF…" value={formData.entreprise} onChange={e => setFormData({ ...formData, entreprise: e.target.value })} /></div>
+              <div><label>Votre projet</label>
+                <select value={formData.projet} onChange={e => setFormData({ ...formData, projet: e.target.value })}>
+                  <option value="">Sélectionner…</option>
+                  <option>Mobilité professionnelle</option>
+                  <option>Achat immobilier</option>
+                  <option>Rénovation énergétique</option>
+                  <option>Location / Gestion locative</option>
+                  <option>Mise en vente</option>
+                </select>
+              </div>
+              <div><label>Contexte rapide</label><textarea rows={2} placeholder="Ex: Muté à Lyon en septembre, budget 420k€, primo-accédant…" value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })} /></div>
+              <button type="submit" className={pack ? "btn-teal" : "btn-main"} style={{ marginTop: 4, fontSize: 15 }}>
+                {pack ? "Démarrer mon accompagnement →" : `Confirmer mon RDV → ${PRIX_RDV} €`}
+              </button>
+              <p style={{ textAlign: "center", color: c.muted, fontSize: 11 }}>Si votre entreprise est adhérente, le paiement ne sera pas prélevé.</p>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  );
+
+  const ModalDemo = () => (
+    <div className="modal-bg" onClick={e => e.target === e.currentTarget && setModal(null)}>
+      <div className="modal">
+        {formSent ? (
+          <div style={{ textAlign: "center", padding: "24px 0" }}>
+            <div style={{ fontSize: 52, marginBottom: 14 }}>🎉</div>
+            <h2 className="fraunces" style={{ fontSize: 24, color: c.text, marginBottom: 8 }}>Demande reçue !</h2>
+            <p style={{ color: c.muted, fontSize: 14 }}>Notre équipe commerciale vous contacte sous 24h pour fixer la démo.</p>
+          </div>
+        ) : (
+          <>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
+              <div>
+                <div style={{ background: c.tealL, border: `1px solid ${c.teal}25`, borderRadius: 8, padding: "4px 12px", marginBottom: 10, display: "inline-block" }}>
+                  <span style={{ color: c.teal, fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em" }}>Démo entreprise</span>
+                </div>
+                <h2 className="fraunces" style={{ fontSize: 22, color: c.text, marginBottom: 4 }}>Planifier une démo personnalisée</h2>
+                <p style={{ color: c.muted, fontSize: 13 }}>30 min · Sur vos propres cas de mobilité · Sans engagement</p>
+              </div>
+              <button className="btn-ghost" onClick={() => setModal(null)} style={{ fontSize: 18, padding: "4px 8px" }}>✕</button>
+            </div>
+            <form onSubmit={submitForm} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div><label>Votre nom</label><input required placeholder="Marie Lefebvre" value={formData.nom} onChange={e => setFormData({ ...formData, nom: e.target.value })} /></div>
+                <div><label>Email professionnel</label><input type="email" required placeholder="m.lefebvre@veolia.com" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} /></div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div><label>Entreprise</label><input required placeholder="Veolia Eau France" value={formData.entreprise} onChange={e => setFormData({ ...formData, entreprise: e.target.value })} /></div>
+                <div><label>Nombre de salariés</label>
+                  <select value={formData.salaries} onChange={e => setFormData({ ...formData, salaries: e.target.value })}>
+                    <option value="">Sélectionner…</option>
+                    <option>Moins de 100</option>
+                    <option>100 — 500</option>
+                    <option>500 — 2 000</option>
+                    <option>Plus de 2 000</option>
+                  </select>
+                </div>
+              </div>
+              <div><label>Votre besoin principal</label>
+                <select value={formData.projet} onChange={e => setFormData({ ...formData, projet: e.target.value })}>
+                  <option value="">Sélectionner…</option>
+                  <option>Gestion des mutations / mobilité</option>
+                  <option>Avantage social logement</option>
+                  <option>Conformité parc immobilier</option>
+                  <option>Rénovation énergétique flotte</option>
+                  <option>Autre</option>
+                </select>
+              </div>
+              <button type="submit" className="btn-teal" style={{ marginTop: 4, fontSize: 15 }}>
+                Demander la démo →
+              </button>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  );
+
+  // ── RENDER ────────────────────────────────────────────────────────────────
+  return (
+    <div style={{ background: c.bg, minHeight: "100vh", color: c.text, transition: "background 0.35s, color 0.35s" }}>
+      <style>{css}</style>
+      <Nav />
+      {page === "salarie" && <PageSalarie />}
+      {page === "entreprise" && <PageEntreprise />}
+      {page === "dashboard" && (
+        <div className="page" style={{ maxWidth: 800, margin: "80px auto", padding: "0 24px", textAlign: "center" }}>
+          <div style={{ fontSize: 56, marginBottom: 16 }}>🔐</div>
+          <h2 className="fraunces" style={{ fontSize: 28, color: c.text, marginBottom: 8 }}>Espace client</h2>
+          <p style={{ color: c.muted, marginBottom: 24 }}>La démo de l'espace client salarié est dans Timonia v2 — consultez l'onglet "Ma Mobilité".</p>
+          <button className="btn-main" onClick={() => setPage("salarie")}>← Retour à l'accueil</button>
+        </div>
+      )}
+
+      {modal === "rdv" && <ModalRdv />}
+      {modal === "rdv-pack" && <ModalRdv pack={true} />}
+      {modal === "demo" && <ModalDemo />}
+
+      <footer style={{ borderTop: `1px solid ${c.border}`, padding: "24px", textAlign: "center" }}>
+        <div style={{ display: "flex", justifyContent: "center", gap: 24, marginBottom: 12, flexWrap: "wrap" }}>
+          <button className="btn-ghost" onClick={() => setPage("salarie")}>Pour les salariés</button>
+          <button className="btn-ghost" onClick={() => setPage("entreprise")}>Pour les entreprises</button>
+          <button className="btn-ghost">Mentions légales</button>
+          <button className="btn-ghost">contact@timonia.fr</button>
+        </div>
+        <p style={{ color: c.muted, fontSize: 12 }}>© 2025 Timonia · Partenaire Action Logement certifié</p>
+      </footer>
+    </div>
+  );
+}
