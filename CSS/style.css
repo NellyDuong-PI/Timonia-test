@@ -1,78 +1,139 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap');
+/* ─── POLICES & VARIABLES ─── */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;600;800&display=swap');
 
 :root {
+    /* Mode Clair (Light) */
     --bg: #fafafa;
-    --text: #0f1729;
-    --accent: #1a56db;
-    --border: rgba(15,23,80,0.07);
     --surface: #ffffff;
+    --surface2: #f4f5f9;
+    --border: rgba(15,23,80,0.08);
+    --text: #0f1729;
+    --muted: #64748b;
+    --accent: #1a56db; /* Bleu Veolia-style */
+    --teal: #0e9f8e;
+    --gold: #c4881a;
+    --green: #15803d;
+    --shadow: 0 4px 20px rgba(0,0,0,0.05);
 }
 
 .dark-theme {
+    /* Mode Sombre (Dark) */
     --bg: #090d1a;
-    --text: #e8edf8;
-    --accent: #3b7dfc;
-    --border: rgba(255,255,255,0.06);
     --surface: #111827;
+    --surface2: #1a2035;
+    --border: rgba(255,255,255,0.08);
+    --text: #e8edf8;
+    --muted: #94a3b8;
+    --accent: #3b7dfc;
 }
 
-body {
-    background-color: var(--bg);
-    color: var(--text);
-    font-family: 'Manrope', sans-serif;
-    margin: 0;
-    transition: all 0.3s ease;
+/* ─── RESET & BASE ─── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { 
+    font-family: 'Manrope', sans-serif; 
+    background-color: var(--bg); 
+    color: var(--text); 
+    line-height: 1.6;
+    transition: background 0.3s, color 0.3s;
 }
+.fraunces { font-family: 'Fraunces', serif; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
 
-.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+/* ─── LAYOUT ─── */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
 
+/* ─── NAVBAR ─── */
 .navbar {
     height: 70px;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
     background: var(--surface);
+    border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
+    z-index: 1000;
 }
-
 .nav-container {
-    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 50px;
 }
+.logo { font-size: 1.4rem; font-weight: 800; color: var(--accent); }
+.nav-links { display: flex; align-items: center; gap: 25px; }
+.nav-links a { font-weight: 600; font-size: 0.95rem; color: var(--muted); }
+.nav-links a:hover { color: var(--accent); }
 
+/* ─── BOUTONS ─── */
 .btn-main {
     background: var(--accent);
     color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 700;
     border: none;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-weight: bold;
     cursor: pointer;
+    transition: 0.2s;
 }
+.btn-main:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(26, 86, 219, 0.3); }
 
+/* ─── HERO SECTION ─── */
 .hero { padding: 100px 0; text-align: center; }
+.badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(26, 86, 219, 0.1);
+    color: var(--accent);
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+}
+.hero h1 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 20px; }
+.hero p { font-size: 1.2rem; color: var(--muted); max-width: 600px; margin: 0 auto 40px; }
 
-.accent { color: var(--accent); }
-
+/* ─── SEARCH BOX (CHECKER) ─── */
 .search-box {
     background: var(--surface);
-    padding: 30px;
-    border-radius: 20px;
+    padding: 32px;
+    border-radius: 24px;
     border: 1px solid var(--border);
-    max-width: 500px;
-    margin: 40px auto;
+    max-width: 550px;
+    margin: 0 auto;
     text-align: left;
+    box-shadow: var(--shadow);
 }
-
-.input-group { display: flex; gap: 10px; margin-top: 10px; }
-
+.search-box label { font-size: 0.7rem; font-weight: 800; color: var(--muted); text-transform: uppercase; }
+.input-group { display: flex; gap: 12px; margin-top: 12px; }
 input {
     flex: 1;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
 }
+input:focus { border-color: var(--accent); }
+
+/* ─── GRILLE DE PRIX (PRICING) ─── */
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 60px;
+}
+.card {
+    background: var(--surface);
+    padding: 40px;
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    transition: 0.3s;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-5px); }
+.card.featured { border: 2px solid var(--accent); background: linear-gradient(to bottom, var(--surface), var(--surface2)); }
+.card h3 { font-size: 1.5rem; margin-bottom: 10px; }
+.price { font-size: 2.5rem; font-weight: 800; margin-bottom: 20px; }
+.features li { margin-bottom: 12px; font-size: 0.9rem; color: var(--muted); }
+.features li::before { content: "✓"; color: var(--accent); font-weight: bold; margin-right: 10px; }
