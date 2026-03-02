@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail du Projet | Timonia</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --bg: #f7f8fc; --surf: #ffffff; --border: rgba(15,30,80,0.07);
+            --text: #0d1829; --muted: #64748b; --accent: #1e63f0;
+        }
+        body { background: var(--bg); font-family: 'Plus Jakarta Sans', sans-serif; padding-bottom: 50px; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .project-header { background: white; padding: 30px; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .grid-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
+        .info-box { background: var(--bg); padding: 15px; border-radius: 12px; }
+        .info-box label { font-size: 10px; font-weight: 800; color: var(--muted); text-transform: uppercase; display: block; }
+        .info-box span { font-weight: 700; font-size: 14px; }
+
+        .cta-box { display: flex; gap: 15px; margin: 25px 0; }
+        .btn-choice { flex: 1; padding: 15px; border-radius: 14px; border: 2px solid var(--border); background: white; cursor: pointer; font-weight: 700; transition: 0.3s; }
+        .btn-choice:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-choice.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .task-list { background: white; border-radius: 24px; border: 1px solid var(--border); padding: 20px; }
+        .task-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--bg); }
+        .task-actions { display: flex; gap: 8px; }
+        .action-chip { font-size: 11px; padding: 6px 12px; border-radius: 100px; border: 1px solid var(--border); cursor: pointer; font-weight: 600; }
+        .action-chip.done { background: #16a34a; color: white; border: none; }
+        .action-chip.delegate { background: #d08600; color: white; border: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="dashboard.html" style="text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 700;">← Retour au Dashboard</a>
+    
+    <div class="project-header" id="project-content">
+        <h1 class="fraunces" id="p-title">Chargement...</h1>
+        <p id="p-desc" style="color: var(--muted); margin-top: 10px;"></p>
+        
+        <div class="grid-info">
+            <div class="info-box"><label>Problématique</label><span id="p-prob">-</span></div>
+            <div class="info-box"><label>Deadline</label><span id="p-dead">-</span></div>
+            <div class="info-box"><label>Budget</label><span id="p-budget">-</span></div>
+            <div class="info-box"><label>Coût Timonia</label><span id="p-cost">-</span></div>
+        </div>
+    </div>
+
+    <div class="cta-box">
+        <button class="btn-choice" onclick="this.classList.toggle('active')">🤝 Être accompagné (Guide)</button>
+        <button class="btn-choice" onclick="this.classList.toggle('active')">🚀 Tout déléguer</button>
+    </div>
+
+    <div class="task-list" id="task-container">
+        <h3 style="margin-bottom: 20px;">To-do list du projet</h3>
+        </div>
+</div>
+
+<script>
+    const data = {
+        achat: {
+            title: "Achat : Appartement T3 Lyon",
+            desc: "Recherche d'une résidence principale suite à mutation.",
+            prob: "Marché tendu, peu de temps pour visiter.",
+            dead: "Septembre 2025",
+            budget: "420 000 €",
+            cost: "Offert (Pack Veolia)",
+            tasks: [
+                {n: "Définition critères", c: "0€"},
+                {n: "Visites avec expert", c: "290€"},
+                {n: "Négociation prix", c: "350€"},
+                {n: "Dossier Mobili-Pass", c: "0€"}
+            ]
+        },
+        renov: {
+            title: "Rénovation : Passoire F Toulouse",
+            desc: "Passage DPE F vers B pour confort et économies.",
+            prob: "Complexité des aides MaPrimeRénov'.",
+            dead: "Décembre 2025",
+            budget: "38 500 €",
+            cost: "280 € (Montage dossier)",
+            tasks: [
+                {n: "Audit énergétique", c: "Inclus"},
+                {n: "Dossier MaPrimeRénov", c: "280€"},
+                {n: "Choix artisans RGE", c: "0€"},
+                {n: "Suivi de chantier", c: "450€"}
+            ]
+        }
+    };
+
+    // Récupérer le type dans l'URL
+    const params = new URLSearchParams(window.location.search);
+    const type = params.get('type') || 'achat';
+    const p = data[type];
+
+    // Remplir la page
+    document.getElementById('p-title').innerText = p.title;
+    document.getElementById('p-desc').innerText = p.desc;
+    document.getElementById('p-prob').innerText = p.prob;
+    document.getElementById('p-dead').innerText = p.dead;
+    document.getElementById('p-budget').innerText = p.budget;
+    document.getElementById('p-cost').innerText = p.cost;
+
+    const container = document.getElementById('task-container');
+    p.tasks.forEach(t => {
+        container.innerHTML += `
+            <div class="task-item">
+                <div>
+                    <div style="font-weight:700; font-size:14px;">${t.n}</div>
+                    <div style="font-size:11px; color:var(--muted)">Coût : ${t.c}</div>
+                </div>
+                <div class="task-actions">
+                    <button class="action-chip" onclick="this.classList.toggle('active')">Je fais</button>
+                    <button class="action-chip delegate" onclick="this.classList.toggle('active')">Déléguer</button>
+                    <button class="action-chip done" onclick="this.parentElement.parentElement.style.opacity='0.5'">Fait ✓</button>
+                </div>
+            </div>
+        `;
+    });
+</script>
+</body>
+</html>
