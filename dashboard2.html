@@ -1,68 +1,4 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Timonia | Veolia</title>
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        :root {
-            --bg: #f7f8fc; --surf: #ffffff; --surf2: #f0f3fb; --border: rgba(15,30,80,0.07);
-            --text: #0d1829; --muted: #64748b; --accent: #1e63f0; --accentL: rgba(30,99,240,0.08);
-            --teal: #0ba592; --tealL: rgba(11,165,146,0.08); --gold: #d08600; --goldL: rgba(208,134,0,0.09);
-            --purple: #7c3aed; --purpleL: rgba(124,58,237,0.08); --green: #16a34a; --greenL: rgba(22,163,74,0.08);
-        }
-        body { background: var(--bg); color: var(--text); margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .nav-dash { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); sticky; top: 0; z-index: 100; padding: 12px 0; }
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-        .header-section { padding: 40px 0 20px; }
-        .veolia-badge { background: linear-gradient(135deg,#eef4ff,#f0fafa); border: 1px solid var(--accentL); padding: 15px 25px; border-radius: 18px; display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
-        
-        /* Grille de projets */
-        .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .card-project { background: var(--surf); border: 1px solid var(--border); padding: 25px; border-radius: 20px; cursor: pointer; transition: 0.3s; position: relative; }
-        .card-project:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
-        .icon-box { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 15px; }
-        
-        /* Progress Bar */
-        .pb-bg { height: 6px; background: var(--surf2); border-radius: 10px; margin: 15px 0 8px; overflow: hidden; }
-        .pb-fill { height: 100%; border-radius: 10px; transition: width 1s ease-in-out; }
-        
-        .status-pill { font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; position: absolute; top: 25px; right: 25px; }
-        .active-step { background: var(--surf2); padding: 10px; border-radius: 12px; font-size: 12px; margin-top: 15px; display: flex; align-items: center; gap: 8px; }
-    </style>
-</head>
-<body>
-
-<nav class="nav-dash">
-    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-        <div class="logo" style="font-size: 1.4rem;">Timonia</div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="text-align: right;">
-                <p style="font-size: 13px; font-weight: 800; margin: 0;">Thomas Mercier</p>
-                <p style="font-size: 11px; color: var(--teal); margin: 0;">Veolia France</p>
-            </div>
-            <div style="width: 35px; height: 35px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px;">TM</div>
-        </div>
-    </div>
-</nav>
-
-<div class="container">
-    <div class="header-section">
-        <h1 class="fraunces" style="font-size: 2.2rem; margin-bottom: 5px;">Bonjour, <span style="color: var(--accent);">Thomas</span> 👋</h1>
-        <p style="color: var(--muted);">Mutation Veolia · Paris → Lyon · Septembre 2025</p>
-    </div>
-
-    <div class="veolia-badge">
-        <span style="font-size: 24px;">🏢</span>
-        <div style="flex: 1;">
-            <p style="font-weight: 800; font-size: 13px; color: var(--accent); margin: 0;">Avantage Collaborateur Veolia — Actif</p>
-            <p style="font-size: 12px; color: var(--muted); margin: 2px 0 0;">Accompagnement mobilité pris en charge par votre entité.</p>
-        </div>
-        <span style="background: var(--greenL); color: var(--green); padding: 5px 12px; border-radius: 100px; font-size: 11px; font-weight: 800;">✓ COUVERT</span>
-    </div>
-
-    <div class="project-grid">
+<div class="project-grid">
     <div class="card-project" onclick="window.location.href='projet.html?type=achat'">
         <span class="status-pill" style="background: var(--accentL); color: var(--accent);">35%</span>
         <div class="icon-box" style="background: var(--accentL);">🏠</div>
@@ -123,6 +59,3 @@
         </div>
     </div>
 </div>
-
-</body>
-</html>
