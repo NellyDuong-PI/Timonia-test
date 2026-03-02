@@ -187,9 +187,28 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
       <p class="hero-sub">Mutation Veolia · Paris → Lyon · 1ᵉʳ septembre 2025<br>
         <span style="color:var(--teal);font-weight:700;">5 projets actifs</span> · Prochain RDV expert : <strong>Jeudi 12 juin — 14h30</strong></p>
     </div>
-    <div class="hero-actions">
-      <a href="nouveau-projet.html" class="btn btn-primary">+ Nouveau projet</a>
-      <button class="btn btn-ghost btn-sm" onclick="alert('Appel expert — démo')">📞 Mon expert</button>
+<div class="hero-actions">
+    <a href="nouveau-projet.html" class="btn btn-primary">+ Nouveau projet</a>
+    <button class="btn btn-ghost btn-sm" onclick="openExpertModal()">📞 Mon expert</button>
+</div>
+
+<div class="modal-bg" id="modalExpert" style="display: none;">
+    <div class="modal-box">
+        <div style="text-align:center; padding:8px 0 16px">
+            <div style="font-size:48px; margin-bottom:12px">📞</div>
+            <h2 class="modal-title">Appeler votre expert</h2>
+            <p class="modal-sub" style="margin-top:6px">Sophie Laurent est disponible pour faire le point sur votre projet.</p>
+        </div>
+        <div class="expert-card" style="background: var(--bg); padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--border);">
+            <p class="expert-name" style="font-weight: 800; margin: 0;">Sophie Laurent</p>
+            <p class="expert-role" style="font-size: 12px; color: var(--muted); margin: 4px 0;">Experte mobilité & financement · Timonia</p>
+            <p class="expert-slot" style="color: var(--accent); font-weight: 700; font-size: 13px; margin-top: 10px;">📅 Prochain créneau : Jeudi 12 juin — 14h30</p>
+        </div>
+        <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;" onclick="closeExpertModal()">Confirmer le RDV →</button>
+        <button class="btn btn-ghost" style="width: 100%;" onclick="closeExpertModal()">Annuler</button>
+    </div>
+</div>
+
     </div>
   </div>
 
